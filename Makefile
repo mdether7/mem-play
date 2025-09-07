@@ -44,6 +44,3 @@ config:
 	@echo "CFLAGS: $(CFLAGS)"
 
 .PHONY: all clean debug release config
-
-
-
