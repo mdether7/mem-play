@@ -18,7 +18,7 @@ static size_t TYPE_SIZES[NUM_DATA_TYPES] =
 memory_chunk* chunk_create(data_type_t type, size_t element_count)
 {
   assert(element_count > 0 && element_count <= MAX_ELEMENTS);
-  assert(type > 0 && type < NUM_DATA_TYPES);
+  assert(type >= 0 && type < NUM_DATA_TYPES);
   
   if (element_count == 0 || element_count > MAX_ELEMENTS) {
     return NULL;
