@@ -2,8 +2,21 @@
 
 PROGRAM= mplay
 CC= gcc
-CPPFLAGS= -MMD
+CPPFLAGS= -MMD #MAKE SPECIFIC FOR DEPENDENCIES
 CFLAGS= -Wall -Wextra -pedantic -std=c99
+LDFLAGS =
+LDLIBS= -lncurses -lpanel
+
+##########################################################
+#LDFLAGS:                                                #
+#        Linker options and library search paths         #  
+#        (e.g., -L/usr/local/lib, -fsanitize=address)    #
+#LDLIBS:																								 #
+#        Actual libraries to link (e.g., -lm, -lpthread) #
+##########################################################
+#		[DEBUG BUILD] ADD THESE IF NEEDED -> else ifeq ($(BUILD),debug)
+# CFLAGS += -fsanitize=address -fsanitize=undefined 
+# LDFLAGS += -fsanitize=address -fsanitize=undefined
 
 BUILD ?= debug
 
@@ -15,14 +28,21 @@ ifeq ($(BUILD),release)
     CFLAGS += -O2 -DNDEBUG
 else ifeq ($(BUILD),debug)
     CFLAGS += -g -O0 -DDEBUG
-else
+
+ else
     $(error Invalid BUILD value. Use 'debug' or 'release')
 endif
 
 all: $(PROGRAM)
 
-$(PROGRAM): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(PROGRAM)
+$(PROGRAM): $(OBJS)                     # or [ $@ ] for program name
+	$(CC) $(LDFLAGS) $(OBJS) $(LDLIBS) -o $(PROGRAM) 
+ # REMEMBER NO CFLAGS DURING LINKING! (not all of them at least)
+ #The only time you need CFLAGS in linking is for special cases like:
+
+ #Sanitizers (-fsanitize=address)
+ #Link-time optimization (-flto)
+ #Profile-guided optimization
 
 -include $(DEPS)
 
@@ -42,5 +62,7 @@ config:
 	@echo "Program: $(PROGRAM)"
 	@echo "Current build: $(BUILD)"
 	@echo "CFLAGS: $(CFLAGS)"
+	@echo "LDFLAGS: $(LDFLAGS)"
+	@echo "LDLIBS: $(LDLIBS)"
 
 .PHONY: all clean debug release config
