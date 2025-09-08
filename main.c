@@ -1,4 +1,5 @@
 #include "mem_chunk.h"
+#include "display.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -19,9 +20,25 @@ static void print_raw_bytes(memory_chunk* chunk);
 
 int main(void)
 {
-  setlocale(LC_ALL, "");
+  // setlocale(LC_ALL, "");
 
-  memory_chunk* chunk = chunk_create(TYPE_DOUBLE, 1);
+  memory_chunk* chunk = NULL;
+  display_t     display;
+
+  if (d_ncurses_init()) {
+    exit(1);
+  }
+
+  if (display_init(&display)) {
+    display_cleanup(&display);
+    exit(1);
+  }
+
+
+
+
+
+  chunk = chunk_create(TYPE_DOUBLE, 1);
 
   if (chunk == NULL) {
     fprintf(stderr, "Chunk memory allocation failed!\n");
@@ -29,11 +46,17 @@ int main(void)
   }
 
   memset(chunk->first_byte, -1, sizeof(double));
-
   print_raw_bytes(chunk);
+
+
+
+
 
   chunk_destroy(chunk);
   chunk = NULL;
+
+  display_cleanup(&display);
+  d_ncurses_shutdown();
 
   return 0;
 }

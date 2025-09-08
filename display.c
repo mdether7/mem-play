@@ -39,26 +39,26 @@
 
 
 static const display_theme DEFAULT = THEME_DEFAULT;
+static bool WINDOWS_INITIALIZED =    false;
+static bool PANELS_INITIALIZED =     false;
 
-static bool WINDOWS_INITIALIZED = false;
-static bool PANELS_INITIALIZED = false;
+static int  d_initialize_themes();
 
 static int  initialize_windows(display_t* display);
 static int  initialize_panels(display_t* display);
 static void cleanup_panels(display_t* display);
-
-static int d_initialize_themes();
+static void cleanup_windows(display_t* display);
 
 int d_ncurses_init()
 {
   if (initscr() == NULL) {
     fprintf(stderr, "Error initializing ncurses\n");
-    return -1;
+    return 1;
   }
 
   if (has_colors()) {
-    d_initialize_themes();
-    start_color();   
+    start_color();
+    d_initialize_themes();   
   }
 
   cbreak();
@@ -80,10 +80,12 @@ int display_init(display_t* display)
   if (initialize_windows(display) == 1) {
     return 1;
   }
+  WINDOWS_INITIALIZED = true;
 
   if (initialize_panels(display) == 1) {
     return 1;
   }
+  PANELS_INITIALIZED = true;
 
   display_set_theme(display, DEFAULT);
 
@@ -94,10 +96,12 @@ void display_cleanup(display_t* display)
 {
   if (PANELS_INITIALIZED) {
     cleanup_panels(display);
+    PANELS_INITIALIZED = false;
   }
 
   if (WINDOWS_INITIALIZED) {
     cleanup_windows(display);
+    WINDOWS_INITIALIZED = false;
   }
 
   display_set_theme(display, DEFAULT);
@@ -147,9 +151,9 @@ void display_set_theme(display_t* display, display_theme theme)
 
 static int initialize_panels(display_t* display)
 {
-  display->PANEL_MEMORY =   new_panel(display->PANEL_MEMORY);
-  display->PANEL_SELECTOR = new_panel(display->PANEL_SELECTOR);
-  display->PANEL_HUD =      new_panel(display->PANEL_HUD);
+  display->PANEL_MEMORY =   new_panel(display->WINDOW_MEMORY);
+  display->PANEL_SELECTOR = new_panel(display->WINDOW_SELECTOR);
+  display->PANEL_HUD =      new_panel(display->WINDOW_HUD);
 
   if (display->PANEL_MEMORY   == NULL ||
       display->PANEL_SELECTOR == NULL ||

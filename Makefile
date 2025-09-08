@@ -20,7 +20,7 @@ LDLIBS= -lncurses -lpanel
 
 BUILD ?= debug
 
-SRC= main.c mem_chunk.c
+SRC= main.c mem_chunk.c display.c
 OBJS= $(SRC:%.c=%.o) # grabs the src variable and replaces c's with o's
 DEPS= $(OBJS:%.o=%.d) # same as above
 
