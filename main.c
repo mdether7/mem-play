@@ -1,23 +1,34 @@
 #include "mem_chunk.h"
 
 #include <stdio.h>
+#include <string.h>
+#include <locale.h>
 #include <stdlib.h>
 #include <assert.h>
+
+static char* TYPE_NAMES[NUM_DATA_TYPES] = 
+{
+  [TYPE_CHAR] = "CHAR",
+  [TYPE_SHORT] = "SHORT",
+  [TYPE_INT] = "INT",
+  [TYPE_FLOAT] = "FLOAT",
+  [TYPE_DOUBLE] = "DOUBLE",
+};
 
 static void print_raw_bytes(memory_chunk* chunk);
 
 int main(void)
 {
-  memory_chunk* chunk = chunk_create(TYPE_INT, 1);
+  setlocale(LC_ALL, "");
+
+  memory_chunk* chunk = chunk_create(TYPE_DOUBLE, 1);
 
   if (chunk == NULL) {
     fprintf(stderr, "Chunk memory allocation failed!\n");
     exit(1);
   }
 
-  for (size_t i = 0; i < chunk->element_count; i++) {
-    ((int*)chunk->first_byte)[i] = 16843009;
-  }
+  memset(chunk->first_byte, -1, sizeof(double));
 
   print_raw_bytes(chunk);
 
@@ -34,7 +45,10 @@ static void print_raw_bytes(memory_chunk* chunk)
     return;
   }
 
-  unsigned char *p = (unsigned char*)chunk->first_byte;
+  printf("[Chunk stores: %s | (sizeof(%s) == %zu)]\n",
+    TYPE_NAMES[chunk->type], TYPE_NAMES[chunk->type], TYPE_SIZES[chunk->type]);
+
+  unsigned char *p = (unsigned char*)chunk->first_byte; // conversion for raw byte iteration.
 
   for (size_t i = 0; i < chunk->size; i++) {
     printf("BYTE[%zu] at ADDRESS[%p] with VALUE[0x%02x]\n", 

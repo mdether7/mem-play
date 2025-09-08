@@ -26,6 +26,8 @@ typedef struct memory_chunk_s {
 
 } memory_chunk;
 
+extern size_t TYPE_SIZES[NUM_DATA_TYPES];
+
 memory_chunk* chunk_create(data_type_t type, size_t element_count);
 void chunk_destroy(memory_chunk* chunk);
 

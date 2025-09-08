@@ -6,7 +6,7 @@
 
 static const size_t MAX_ELEMENTS = 100;
 
-static size_t TYPE_SIZES[NUM_DATA_TYPES] = 
+size_t TYPE_SIZES[NUM_DATA_TYPES] = 
 {
   [TYPE_CHAR] = sizeof(char),
   [TYPE_SHORT] = sizeof(short),
