@@ -3,6 +3,8 @@
 #include <ncurses.h>
 #include <panel.h>
 
+#include <stdbool.h>
+
 /*** GOOD IDEA THANKS CHAT! ***/
 
 // static const display_state_t DEFAULT_STATE = {
@@ -38,8 +40,12 @@
 
 static const display_theme DEFAULT = THEME_DEFAULT;
 
-static int initialize_windows(display_t* display);
-static int initialize_panels(display_t* display);
+static bool WINDOWS_INITIALIZED = false;
+static bool PANELS_INITIALIZED = false;
+
+static int  initialize_windows(display_t* display);
+static int  initialize_panels(display_t* display);
+static void cleanup_panels(display_t* display);
 
 static int d_initialize_themes();
 
@@ -84,9 +90,39 @@ int display_init(display_t* display)
   return 0; 
 }
 
-void display_cleanup()
+void display_cleanup(display_t* display)
 {
+  if (PANELS_INITIALIZED) {
+    cleanup_panels(display);
+  }
 
+  if (WINDOWS_INITIALIZED) {
+    cleanup_windows(display);
+  }
+
+  display_set_theme(display, DEFAULT);
+}
+
+static void cleanup_panels(display_t* display)
+{
+  del_panel(display->PANEL_MEMORY);
+  del_panel(display->PANEL_SELECTOR);
+  del_panel(display->PANEL_HUD);
+
+  display->PANEL_MEMORY =   NULL;
+  display->PANEL_SELECTOR = NULL;
+  display->PANEL_HUD =      NULL;
+}
+
+static void cleanup_windows(display_t* display)
+{
+  delwin(display->WINDOW_MEMORY);
+  delwin(display->WINDOW_SELECTOR);
+  delwin(display->WINDOW_HUD);
+
+  display->WINDOW_MEMORY =   NULL;
+  display->WINDOW_SELECTOR = NULL;
+  display->WINDOW_HUD =      NULL;
 }
 
 static int initialize_windows(display_t* display)

@@ -26,7 +26,7 @@ typedef struct display_s {
 
 } display_t;
 
-int display_init();  // 0 on success else 1
+int  display_init();  // 0 on success else 1
 void display_cleanup();
 void display_set_theme(display_t* display, display_theme theme);
 
