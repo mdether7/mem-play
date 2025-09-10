@@ -34,10 +34,6 @@ int main(void)
     exit(1);
   }
 
-
-
-
-
   chunk = chunk_create(TYPE_DOUBLE, 1);
 
   if (chunk == NULL) {
@@ -48,9 +44,8 @@ int main(void)
   memset(chunk->first_byte, -1, sizeof(double));
   print_raw_bytes(chunk);
 
-
-
-
+  
+  
 
   chunk_destroy(chunk);
   chunk = NULL;

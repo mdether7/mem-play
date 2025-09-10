@@ -39,8 +39,8 @@
 
 
 static const display_theme DEFAULT = THEME_DEFAULT;
-static bool WINDOWS_INITIALIZED =    false;
-static bool PANELS_INITIALIZED =     false;
+static bool WINDOWS_INITIALIZED    = false;
+static bool PANELS_INITIALIZED     = false;
 
 static int  d_initialize_themes();
 
